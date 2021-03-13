@@ -28,7 +28,7 @@ public class MyMqttService extends Service {
     public final String TAG = MyMqttService.class.getSimpleName();
     private static MqttAndroidClient mqttAndroidClient;
     private MqttConnectOptions mMqttConnectOptions;
-    private static final String clientid ="e608e855-ab15-4879-84b0-dc4f2cc6ac71";
+    private static final String clientid ="";
 
     private Callback callback;
     private String data = "服务器正在执行";
