@@ -28,7 +28,7 @@ public class MyMqttService extends Service {
     public final String TAG = MyMqttService.class.getSimpleName();
     private static MqttAndroidClient mqttAndroidClient;
     private MqttConnectOptions mMqttConnectOptions;
-    private static final String clientid ="";
+    private static final String clientid ="e608e855-ab15-4879-84b0-dc4f2cc6ac71";
 
     private Callback callback;
     private String data = "服务器正在执行";
@@ -137,7 +137,7 @@ public class MyMqttService extends Service {
         Boolean retained = false;
         try {
             //参数分别为：主题、消息的字节数组、服务质量、是否在服务器保留断开连接后的最后一条消息
-            mqttAndroidClient.publish(topic, message.getBytes(), qos.intValue(), retained);
+            mqttAndroidClient.publish(topic, message.getBytes(), qos.intValue(), false);
         } catch (MqttException e) {
             e.printStackTrace();
         }
