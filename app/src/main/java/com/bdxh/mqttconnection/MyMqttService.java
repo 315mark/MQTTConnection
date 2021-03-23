@@ -45,17 +45,18 @@ public class MyMqttService extends Service {
 
     }
 
+    private MQBinder iBinder = new MQBinder();
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new MQBinder();
+        return iBinder;
     }
 
 
     @Override
     public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
+        return false;
     }
 
     public class MQBinder extends Binder {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/scan_card"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="刷卡 读取信息"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/open_video"
+        android:layout_below="@id/scan_card"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/dp5"
+        android:layout_centerHorizontal="true"
+        android:text="打开系统"
+        />
+
+    <ImageView
+        android:id="@+id/ivPhoto"
+        android:layout_above="@id/scan_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"/>
+
+</RelativeLayout>

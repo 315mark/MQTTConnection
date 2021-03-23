@@ -94,6 +94,7 @@ public class RabbitMQActivity extends AppCompatActivity {
      */
     private void basicPublish() {
         try {
+            String queueNa = sendChannel.queueDeclare().getQueue();
 //            String queueName = channel.queueDeclare().getQueue();  这是随机生产的队列名  rountingKey  路由键
             LogUtils.d(" 消息队列 " + queueName2);
             sendChannel.queueBind(queueName2, exchangeName, "");
@@ -109,7 +110,7 @@ public class RabbitMQActivity extends AppCompatActivity {
     }
 
     /**
-     * 收消息  6596595606247  8697354688244
+     * 收消息
      */
     private void basicConsume() {
         try {
