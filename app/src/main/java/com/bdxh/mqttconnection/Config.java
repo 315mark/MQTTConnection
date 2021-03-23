@@ -35,7 +35,7 @@ public class Config {
     public static final int REQUEST_READ_PHONE_STATE = 885;
     public static final int RUSH_DATA_INFO = 233;
 
-    public static String HOST = "";//服务器地址（协议+地址+端口号）
+    public static String HOST = "tcp://192.168.0.66:1883";//服务器地址（协议+地址+端口号）
     public static String USERNAME = "admin";//用户名
     public static String PASSWORD = "admin";//密码
     public static String PUBLISH_TOPIC = "demo/src/repson";//发布主题

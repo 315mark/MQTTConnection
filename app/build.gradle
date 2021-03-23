@@ -16,6 +16,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+
+
 }
 
 dependencies {
@@ -29,4 +36,7 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'com.blankj:utilcode:1.22.0'
+
+    // MQ RabbitMq AndroidStudio 引用
+    implementation group: 'com.rabbitmq', name: 'amqp-client', version: '4.2.0'
 }

@@ -49,11 +49,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     @Override
     protected void onStart() {
         super.onStart();
-
-        mHandler = new Handler() {
+        mHandler = new Handler(){
             @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
+            public void handleMessage(Message msg){
+                switch (msg.what){
                     case Config.MQTT_PUSH_SUCCESS_MSG:
                         String data = (String) msg.obj;
                         LogUtils.d(data);
