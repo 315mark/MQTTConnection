@@ -1,9 +1,15 @@
 package com.bdxh.mqttconnection.download;
 
+import android.app.Application;
+import android.content.Context;
 import android.util.Log;
+
+import com.bdxh.mqttconnection.BaseActivity;
+import com.bdxh.mqttconnection.MoreBaseUrlInterceptor;
 import com.blankj.utilcode.util.LogUtils;
 import java.io.File;
 import java.io.IOException;
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +40,7 @@ public class DownloadCenter {
     private static DownloadCenter instance;
 
     private static Retrofit retrofit;
+    private static BaseActivity context;
 
     private List<ControlCallBack> callBackList = new ArrayList<>();
     private Set<DownloadCenterListener> listeners = new HashSet<>();
@@ -42,11 +49,12 @@ public class DownloadCenter {
         init();
     }
 
-    public static DownloadCenter getInstance() {
+    public static DownloadCenter getInstance(BaseActivity activity) {
         if (instance == null) {
             synchronized (DownloadCenter.class) {
                 if (instance == null) {
                     instance = new DownloadCenter();
+                    context = activity ;
                 }
             }
         }
@@ -87,19 +95,13 @@ public class DownloadCenter {
                 .downloadPartial(callBack.getUrl(), "bytes=" + startByte + "-")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.io())
-                .doOnNext(new Consumer<ResponseBody>(){
-                    @Override
-                    public void accept(ResponseBody responseBody) throws Exception {
-                        LogUtils.d(" accept success responseBody : " + responseBody);
-                        callBack.saveFile(responseBody);
-                    }
+                .doOnNext(responseBody -> {
+                    LogUtils.d(" accept success responseBody : " + responseBody);
+                    callBack.saveFile(responseBody);
                 })
-                .doOnError(new Consumer<Throwable>(){
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        LogUtils.d(" accecpt error msg : " +throwable.getMessage());
-                        tellDownloadError(callBack.getUrl(), throwable);
-                    }
+                .doOnError(throwable -> {
+                    LogUtils.d(" accecpt error msg : " +throwable.getMessage());
+                    tellDownloadError(callBack.getUrl(), throwable);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -175,18 +177,14 @@ public class DownloadCenter {
                 .download(downUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .doOnNext(new Consumer<ResponseBody>() {
-                    @Override
-                    public void accept(ResponseBody responseBody) throws Exception {
-                        LogUtils.d(" accept success responseBody : " + responseBody);
-                                finalCallBack.saveFile(responseBody);
-                    }
+                .compose(ProgressUtils.applyProgressBar(context))
+                .doOnNext(responseBody -> {
+                    LogUtils.d(" accept success responseBody : " + responseBody);
+                    finalCallBack.saveFile(responseBody);
                 })
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        LogUtils.e( "accept on error: " + downUrl, throwable);
-                    }
+                .doOnError(throwable -> {
+                    LogUtils.e( "accept on error: " + downUrl, throwable);
+                    finalCallBack.onError(finalCallBack.getUrl(),throwable);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -216,6 +214,7 @@ public class DownloadCenter {
     private void init() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(8, TimeUnit.SECONDS)
+                .addInterceptor(new MoreBaseUrlInterceptor())
                 .addInterceptor(new ProgressInterceptor((url, bytesRead, contentLength, done) -> {
                     tellProgress(url, bytesRead, contentLength, done);
                     double progress = bytesRead * 1.0 / contentLength;
@@ -225,6 +224,7 @@ public class DownloadCenter {
 
         retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
+
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl("https://yourbaseurl.com")
                 .build();
@@ -233,7 +233,10 @@ public class DownloadCenter {
 
     public interface ApiService {
 
-        @Streaming
+        String base_url = "http://172.0.0.92:8080/";
+        String base_url_mdffx = "http://11.254.16.19/";
+
+        @Streaming  //该属性防止大文件写入内存
         @GET
         Observable<ResponseBody> download(@Url String url);
 

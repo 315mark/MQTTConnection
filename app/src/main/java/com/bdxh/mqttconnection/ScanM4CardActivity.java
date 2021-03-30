@@ -64,7 +64,6 @@ public class ScanM4CardActivity extends BaseActivity {
             //动态请求相机权限
             checkPermissionAndCamera();  //在其中若用户给予权限则请求相机拍照
         });
-
     }
 
     /**

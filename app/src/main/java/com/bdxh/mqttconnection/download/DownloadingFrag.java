@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bdxh.mqttconnection.BaseActivity;
 import com.bdxh.mqttconnection.R;
 import com.blankj.utilcode.util.LogUtils;
 
@@ -35,6 +36,7 @@ public class DownloadingFrag extends Fragment {
     private TaskAdapter taskAdapter;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Map<String, Long> mProgressUpdateTimeMap = new HashMap<>();
+    private BaseActivity activity;
 
     @Nullable
     @Override
@@ -46,10 +48,12 @@ public class DownloadingFrag extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerView = view.findViewById(R.id.download_task_re);
+
+        activity = (BaseActivity) getActivity();
         taskAdapter = new TaskAdapter();
         recyclerView.setAdapter(taskAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        DownloadCenter.getInstance().addListener(mDownloadCenterListener);
+        DownloadCenter.getInstance(activity).addListener(mDownloadCenterListener);
         taskAdapter.setOnItemClick(new OnItemClick() {
             @Override
             public void onDelClick(final ControlCallBack callBack) {
@@ -68,7 +72,7 @@ public class DownloadingFrag extends Fragment {
                     @Override
                     public void run() {
                         if (callBack.isPaused() || callBack.isError()) {
-                            DownloadCenter.getInstance().continueDownload(callBack);
+                            DownloadCenter.getInstance(activity).continueDownload(callBack);
                         } else {
                             callBack.pause();
                         }
@@ -80,7 +84,7 @@ public class DownloadingFrag extends Fragment {
 
     @Override
     public void onDestroy() {
-        DownloadCenter.getInstance().removeListener(mDownloadCenterListener);
+        DownloadCenter.getInstance(activity).removeListener(mDownloadCenterListener);
         super.onDestroy();
     }
 

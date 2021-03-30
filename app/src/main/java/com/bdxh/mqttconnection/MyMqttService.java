@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -45,7 +46,14 @@ public class MyMqttService extends Service {
 
     }
 
-    private MQBinder iBinder = new MQBinder();
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
+ /*   private MQBinder iBinder = new MQBinder();
 
     @Nullable
     @Override
@@ -70,7 +78,7 @@ public class MyMqttService extends Service {
         }
 
     }
-
+*/
 
     @Override
     public void onCreate() {
@@ -102,7 +110,7 @@ public class MyMqttService extends Service {
     public static void MQTT_Publish(String message) {
         String topic = Config.RESPONSE_TOPIC;
         Integer qos = 1;
-        Boolean retained = false;// 是否在服务器保留断开连接后的最后一条消息
+        Boolean retained = false;// 设置为true 后 设备每次连接成功后都会推一条消息 如要删除 只能再推一条空数据
         try {
             //参数分别为：主题、消息的字节数组、服务质量、是否在服务器保留断开连接后的最后一条消息
             mqttAndroidClient.publish(topic, message.getBytes(), qos, retained.booleanValue());
@@ -110,6 +118,39 @@ public class MyMqttService extends Service {
             e.printStackTrace();
         }
     }
+
+    //会议室消息模式  订阅同一个主题  发布同一个主题
+    public static void Meet_Publish(String msg , String topic){
+        Integer qos = 1;
+        Boolean retained = false;
+        try {
+            mqttAndroidClient.publish(topic , msg.getBytes() , qos ,retained , null ,actionListener);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //订阅多个主题 topics
+    public  void Meet_Subscribe(String[] topics , int[] pos){
+        try {
+            mqttAndroidClient.subscribe(topics ,pos ,null ,actionListener);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //监听订阅 发布状态的
+    private static IMqttActionListener actionListener = new IMqttActionListener() {
+        @Override
+        public void onSuccess(IMqttToken asyncActionToken) {
+            //跟据状态进行判断处理
+        }
+
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+
+        }
+    };
 
 
     /**
@@ -150,7 +191,7 @@ public class MyMqttService extends Service {
     private void init() {
         String serverURI = Config.HOST; //服务器地址（协议+地址+端口号）
         try {
-            mqttAndroidClient = new MqttAndroidClient(this, serverURI, clientid);
+            mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), serverURI, clientid);
             mqttAndroidClient.setCallback(mqttCallback); //设置监听订阅消息的回调
             mMqttConnectOptions = new MqttConnectOptions();
             mMqttConnectOptions.setCleanSession(true); //设置是否清除缓存  否则会重复提交
@@ -175,6 +216,7 @@ public class MyMqttService extends Service {
             // 最后的遗嘱
             try {
                 mMqttConnectOptions.setWill(topic, message.getBytes(), qos.intValue(), retained);
+                mMqttConnectOptions.getDebug();
             } catch (Exception e) {
                 LogUtils.e( "Exception Occured", e);
                 doConnect = false;
@@ -193,7 +235,7 @@ public class MyMqttService extends Service {
      * 连接MQTT服务器
      */
     private void doClientConnection() {
-        if (!mqttAndroidClient.isConnected() && isConnectIsNomarl()) {
+        if (! isAlreadyConnected() && isConnectIsNomarl()) {
             try {
                 mqttAndroidClient.connect(mMqttConnectOptions, null, iMqttActionListener);
             } catch (MqttException e) {
@@ -214,15 +256,32 @@ public class MyMqttService extends Service {
         } else {
             LogUtils.i("没有可用网络");
             /*没有可用网络的时候，延迟3秒再尝试重连*/
-            new Handler().postDelayed(new Runnable() {
+       /*     new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                     doClientConnection();
+                    doClientConnection();
                 }
-            },3000);
+            },3000);*/
             return false;
         }
     }
+
+    public boolean isAlreadyConnected() {
+        if(mqttAndroidClient != null){
+            try{
+                boolean result = mqttAndroidClient.isConnected();
+                return result;
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
 
     //MQTT是否连接成功的监听
     private IMqttActionListener iMqttActionListener = new IMqttActionListener() {
@@ -286,12 +345,13 @@ public class MyMqttService extends Service {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         try {
+            LogUtils.d("释放资源");
             mqttAndroidClient.disconnect(); //断开连接
         } catch (MqttException e) {
             e.printStackTrace();
         }
-        super.onDestroy();
     }
 
     public Callback getCallback() {

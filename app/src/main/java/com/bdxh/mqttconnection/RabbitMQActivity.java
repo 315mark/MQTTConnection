@@ -47,15 +47,22 @@ public class RabbitMQActivity extends AppCompatActivity {
 
     protected void init() {
         setupConnectionFactory();
+//        UniqueIDUtils.getUniqueID(this);  可根据此方法生成uuid 跳过
         ThreadManager.getThreadPool().execute(() -> {
             try {
                 //发送连接
                 sendConnection = factory.newConnection();
                 //发送通道
                 sendChannel = sendConnection.createChannel();
+                //android端生成队列名  可根据uuid生成唯一队列
                 //声明了一个交换和一个服务器命名的队列，然后将它们绑定在一起。
-                sendChannel.exchangeDeclare(rountingKey, "fanout", true);
 
+                sendChannel.exchangeDeclare(rountingKey, "fanout", true);
+                //生成队列
+                sendChannel.queueDeclare(rountingKey, false, false, false, null);
+
+                //
+//                sendChannel.queueBind(rountingKey,)
                 //收连接
                 receiveConnection = factory.newConnection();
                 //收通道
@@ -83,7 +90,7 @@ public class RabbitMQActivity extends AppCompatActivity {
         factory = new ConnectionFactory();
         factory.setUsername(userName);
         factory.setPassword(passWord);
-        factory.setHost(hostName);
+        factory.setHost(hostName); //retain
         factory.setPort(portNum);
         factory.setAutomaticRecoveryEnabled(true);//设置网络异常重连
         factory.setRequestedHeartbeat(1);//是否断网

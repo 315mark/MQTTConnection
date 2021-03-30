@@ -75,7 +75,7 @@ public class DownloadActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void downloadUrl(final String url, File targetFile, final int downloadBytePerMs) {
-        DownloadCenter.getInstance().download(url, targetFile, downloadBytePerMs);
+        DownloadCenter.getInstance(this).download(url, targetFile, downloadBytePerMs);
     }
 
     private void setOnClick(View.OnClickListener l, int... id) {

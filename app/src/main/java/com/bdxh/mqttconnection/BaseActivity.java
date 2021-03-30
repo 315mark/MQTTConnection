@@ -3,12 +3,10 @@ package com.bdxh.mqttconnection;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
@@ -123,7 +121,5 @@ public abstract class BaseActivity extends AppCompatActivity /*implements BaseVi
     protected void closFocus(){
 
     }
-
-
 
 }

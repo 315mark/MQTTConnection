@@ -74,8 +74,9 @@ public class UniqueIDUtils {
         Log.e(TAG, "getUniqueID: DeviceId获取成功" + uniqueID);
     }
 
-    private static void getAndroidID(Context context) {
-        if (!TextUtils.isEmpty(uniqueID)) {
+    @SuppressLint("HardwareIds")
+    private static void getAndroidID(Context context){
+        if (!TextUtils.isEmpty(uniqueID)){
             return;
         }
         String androidID = null;
@@ -154,8 +155,6 @@ public class UniqueIDUtils {
                 byte[] bytes = new byte[(int) file.length()];
                 inputStream.read(bytes);
                 uniqueID = new String(bytes);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
