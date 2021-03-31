@@ -9,6 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BUILD_TIME", "\"" + new Date().format("yyyy-MM-dd") + "\"")
     }
     buildTypes {
         release {
@@ -22,6 +24,14 @@ android {
         sourceCompatibility 1.8
     }
 
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res',
+                    'src/main/res-night'
+                    ]
+        }
+    }
 
 }
 
@@ -56,4 +66,11 @@ dependencies {
 //    implementation 'com.android.support:appcompat-v7:27.1.1'
     //  AndroidX appcompat 已经不需要分v4 v7 v13
     implementation 'androidx.appcompat:appcompat:1.0.2'
+    
+    //一键换肤
+    implementation 'skin.support:skin-support:4.0.4'                   // skin-support
+    implementation 'skin.support:skin-support-appcompat:4.0.4'         // skin-support 基础控件支持
+    implementation 'skin.support:skin-support-design:4.0.4'            // skin-support-design material design 控件支持[可选]
+    implementation 'skin.support:skin-support-cardview:4.0.4'          // skin-support-cardview CardView 控件支持[可选]
+    implementation 'skin.support:skin-support-constraint-layout:4.0.4' // skin-support-constraint-layout ConstraintLayout 控件支持[可选]
 }

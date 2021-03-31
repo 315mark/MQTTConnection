@@ -1,16 +1,9 @@
 package com.bdxh.mqttconnection;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.view.View;
 
@@ -18,18 +11,23 @@ import com.blankj.utilcode.util.LogUtils;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity /*implements ServiceConnection*/ {
+import androidx.appcompat.app.AppCompatDelegate;
+
+public class MainActivity extends BaseActivity /*implements ServiceConnection*/ {
 
 //    private MyMqttService.MQBinder binder;
     private Handler mHandler;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int getLayoutResID() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void init() {
         startService(new Intent(MainActivity.this, MyMqttService.class)); //开启服务  这种启动不能传递数据
         //服务绑定后，会调用 onServiceConnected
-//        Intent bindIntent = new Intent(this, MyMqttService.class);  //这种方式老报错  不知道哪里操作不对
+//        Intent bindIntent = new Intent(this, MyMqttService.class);
 //        bindService(bindIntent,conn,BIND_ABOVE_CLIENT);
         LogUtils.d("onCreate");
     }
@@ -41,9 +39,18 @@ public class MainActivity extends AppCompatActivity /*implements ServiceConnecti
         MyMqttService.publish(message);
     }
 
+    public void changeSkin(View view) {
+        openSkinApp();
+    }
+
+    public void closeSkin(View view) {
+        closeSkin();
+    }
 
     public void sendMsg(View view){
 //        MyMqttService.MQTT_Publish("发送消息给你");
+
+      /*    // 这种重启 Activity 换肤弊端太多  一键换肤更方便
         int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (mode == Configuration.UI_MODE_NIGHT_YES) {
             TheamColorUtil.getInstance().setIsNightMode(false);
@@ -53,10 +60,8 @@ public class MainActivity extends AppCompatActivity /*implements ServiceConnecti
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
         getWindow().setWindowAnimations(R.style.WindowAnimationFadeInOut);
-//        finish();
-//        startActivity(new Intent( this, this.getClass()));
-//        overridePendingTransition(0, 0);
-          recreate();
+        recreate();
+        */
     }
 
 
@@ -86,21 +91,23 @@ public class MainActivity extends AppCompatActivity /*implements ServiceConnecti
     }
 
 
+/*
+        //  binder 绑定页面才会用这个
     private ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
-//            binder = (MyMqttService.MQBinder) iBinder;
-//            binder.getMyService().setCallback(data -> {
-//                Message msg = mHandler.obtainMessage(Config.MQTT_PUSH_SUCCESS_MSG, data);
-//                mHandler.sendMessage(msg);
-//            });
+            binder = (MyMqttService.MQBinder) iBinder;
+            binder.getMyService().setCallback(data -> {
+                Message msg = mHandler.obtainMessage(Config.MQTT_PUSH_SUCCESS_MSG, data);
+                mHandler.sendMessage(msg);
+            });
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
 
         }
-    };
+    };*/
 
 
 
@@ -112,5 +119,7 @@ public class MainActivity extends AppCompatActivity /*implements ServiceConnecti
         stopService(new Intent(this,MyMqttService.class));  // stop 模式不能传递数据
         LogUtils.d("结束页面");
 //        unbindService(conn);
+        MyMqttService.destroy();
     }
+
 }

@@ -2,10 +2,13 @@ package com.bdxh.mqttconnection;
 
 import android.app.Application;
 import android.content.Context;
-
 import java.util.Calendar;
-
 import androidx.appcompat.app.AppCompatDelegate;
+import skin.support.SkinCompatManager;
+import skin.support.app.SkinAppCompatViewInflater;
+import skin.support.app.SkinCardViewInflater;
+import skin.support.constraint.app.SkinConstraintViewInflater;
+import skin.support.design.app.SkinMaterialViewInflater;
 
 public class App extends Application {
 
@@ -15,28 +18,37 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        initTheme();
+//        initTheme();
+
+        SkinCompatManager.withoutActivity(this)
+//                .addStrategy(new CustomSDCardLoader())          // 自定义加载策略，指定SDCard路径
+//                .addStrategy(new ZipSDCardLoader())             // 自定义加载策略，获取zip包中的资源
+                .addInflater(new SkinAppCompatViewInflater())   // 基础控件换肤
+                .addInflater(new SkinMaterialViewInflater())    // material design
+                .addInflater(new SkinConstraintViewInflater())  // ConstraintLayout
+                .addInflater(new SkinCardViewInflater())        // CardView v7
+//                .setSkinStatusBarColorEnable(true)              // 关闭状态栏换肤
+//                .setSkinWindowBackgroundEnable(false)           // 关闭windowBackground换肤
+//                .setSkinAllActivityEnable(false)                // true: 默认所有的Activity都换肤; false: 只有实现SkinCompatSupportable接口的Activity换肤
+                .loadSkin();
+
     }
 
+    // 系统自带白天黑夜模式 需重启 Activity 局限性较大
     private void initTheme() {
         TheamColorUtil settingUtil = TheamColorUtil.getInstance();
-
         // 获取是否开启 "自动切换夜间模式"
         if (settingUtil.getIsAutoNightMode()) {
-
             int nightStartHour = Integer.parseInt(settingUtil.getNightStartHour());
             int nightStartMinute = Integer.parseInt(settingUtil.getNightStartMinute());
             int dayStartHour = Integer.parseInt(settingUtil.getDayStartHour());
             int dayStartMinute = Integer.parseInt(settingUtil.getDayStartMinute());
-
             Calendar calendar = Calendar.getInstance();
             int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
             int currentMinute = calendar.get(Calendar.MINUTE);
-
             int nightValue = nightStartHour * 60 + nightStartMinute;
             int dayValue = dayStartHour * 60 + dayStartMinute;
             int currentValue = currentHour * 60 + currentMinute;
-
             if (currentValue >= nightValue || currentValue <= dayValue) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 settingUtil.setIsNightMode(true);

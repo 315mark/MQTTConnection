@@ -5,17 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -23,6 +19,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 import androidx.annotation.Nullable;
 
 public class MyMqttService extends Service {
@@ -190,8 +187,9 @@ public class MyMqttService extends Service {
      */
     private void init() {
         String serverURI = Config.HOST; //服务器地址（协议+地址+端口号）
+        clientid = UniqueIDUtils.getUniqueID(this);
         try {
-            mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), serverURI, clientid);
+            mqttAndroidClient = new MqttAndroidClient(this , serverURI, clientid);
             mqttAndroidClient.setCallback(mqttCallback); //设置监听订阅消息的回调
             mMqttConnectOptions = new MqttConnectOptions();
             mMqttConnectOptions.setCleanSession(true); //设置是否清除缓存  否则会重复提交
@@ -342,6 +340,14 @@ public class MyMqttService extends Service {
             doClientConnection();//连接断开，重连
         }
     };
+
+    public static void destroy(){
+        if (mqttAndroidClient != null){
+            mqttAndroidClient.unregisterResources();
+            mqttAndroidClient.close();
+        }
+    }
+
 
     @Override
     public void onDestroy() {

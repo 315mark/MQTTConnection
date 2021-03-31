@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--  这种配置资源方式属于系统自带api  -->
     <color name="colorPrimary">#35464e</color>
     <color name="colorPrimaryDark">#212a2f</color>
     <color name="colorAccent">#212a2f</color>
@@ -9,5 +10,5 @@
     <color name="windowBackground">@color/Grey900</color>
     <color name="line_divider">@color/Grey700</color>
 
-
+    <color name="White">#2196f3</color>
 </resources>

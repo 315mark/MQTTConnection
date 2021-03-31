@@ -1,24 +1,33 @@
 package com.bdxh.mqttconnection;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.SkinAppCompatDelegateImpl;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import skin.support.SkinCompatManager;
+import skin.support.app.SkinCompatActivity;
+import skin.support.content.res.SkinCompatResources;
+import skin.support.widget.SkinCompatSupportable;
 
 /**
  * 基础Activity   封装RxBinding
  * 实例化的Disposable需在不用时及时销毁
  */
-public abstract class BaseActivity extends AppCompatActivity /*implements BaseView */{
+public abstract class BaseActivity extends AppCompatActivity implements SkinCompatSupportable /* BaseView */{
     public CompositeDisposable mCompositeDisposable;
     private Unbinder bind;
 
@@ -47,6 +56,54 @@ public abstract class BaseActivity extends AppCompatActivity /*implements BaseVi
             bind.unbind();//解除绑定
         }
     }
+
+    //换肤重写方法
+    @NonNull
+    @Override
+    public AppCompatDelegate getDelegate() {
+        return SkinAppCompatDelegateImpl.get(this, this);
+    }
+
+    @Override
+    public void applySkin() {
+//        updateStatusBarColor();
+    }
+
+
+    private void updateStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(SkinCompatResources.getColor(this, R.color.colorPrimary));
+        }
+        // 修改状态栏字体颜色
+        boolean useDarkStatusBar = getResources().getBoolean(R.bool.use_dark_status);
+//        int resId = SkinCompatResources.getInstance().getTargetResId(this, R.bool.use_dark_status);
+//
+//        if (resId != 0) {
+//            useDarkStatusBar = SkinCompatResources.getInstance().getSkinResources().getBoolean(resId);
+//        }
+//        if (useDarkStatusBar) {
+//            SkinStatusBarUtils.setStatusBarDarkMode(this);
+//        } else {
+//            SkinStatusBarUtils.setStatusBarLightMode(this);
+//        }
+    }
+
+
+    //切换方法  该方法通过配置一套 value-night colors进行换肤  后缀加载
+    protected void openSkinApp(){
+        SkinCompatManager.getInstance().loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+    }
+
+    //取消的方法
+    protected void closeSkin(){
+        SkinCompatManager.getInstance().restoreDefaultTheme();
+    }
+
+//    特殊需求  设置某些控件不跟随换肤改变颜色                   // 这种方式设置依旧会改变
+//    setBackgroundDrawable(redDrawable)                      //  setBackgroundResource(R.drawable.red)
+//    background="#ce3d3a"    布局操作                        //  background="@drawable/red"
+
+
 
     /**
      * 添加订阅

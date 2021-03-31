@@ -46,6 +46,7 @@ public class ScanM4CardActivity extends BaseActivity {
     /**
      * 用于保存图片的文件路径，Android 10以下使用图片路径访问图片
      */
+
     private String mCameraImagePath;
 
     /**
