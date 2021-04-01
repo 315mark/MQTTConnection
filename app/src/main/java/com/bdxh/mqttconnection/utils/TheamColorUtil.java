@@ -1,9 +1,11 @@
-package com.bdxh.mqttconnection;
+package com.bdxh.mqttconnection.utils;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 
+import com.bdxh.mqttconnection.App;
+import com.bdxh.mqttconnection.R;
 import com.blankj.utilcode.util.NetworkUtils;
 
 public class TheamColorUtil {

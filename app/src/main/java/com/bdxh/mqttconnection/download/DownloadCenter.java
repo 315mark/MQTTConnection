@@ -176,6 +176,7 @@ public class DownloadCenter {
         retrofit.create(ApiService.class)
                 .download(downUrl)
                 .subscribeOn(Schedulers.io())
+
                 .observeOn(Schedulers.io())
                 .compose(ProgressUtils.applyProgressBar(context))
                 .doOnNext(responseBody -> {

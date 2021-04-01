@@ -1,4 +1,4 @@
-package com.bdxh.mqttconnection;
+package com.bdxh.mqttconnection.utils;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;

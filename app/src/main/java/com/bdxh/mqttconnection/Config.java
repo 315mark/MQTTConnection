@@ -19,6 +19,15 @@ public class Config {
     public static final String Config_Show_Icon = "showIcon";
 
 
+    /**
+     * SharedPreferences名字
+     */
+    public static final String SP_NAME = "load_resource";
+    /**
+     * 资源路径
+     */
+    public static final String SP_RESOURCE_PATH = "sp_resource_path";
+
 
     public static final String KEY_DATA = "key_data";
     public static final String[] mPermissions = {

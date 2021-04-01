@@ -2,6 +2,12 @@ package com.bdxh.mqttconnection;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.bdxh.mqttconnection.detach.LoadResourceUtil;
+import com.bdxh.mqttconnection.utils.SPUtil;
+import com.bdxh.mqttconnection.utils.TheamColorUtil;
+
+
 import java.util.Calendar;
 import androidx.appcompat.app.AppCompatDelegate;
 import skin.support.SkinCompatManager;
@@ -10,9 +16,12 @@ import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
 import skin.support.design.app.SkinMaterialViewInflater;
 
+import static com.bdxh.mqttconnection.utils.SPUtil.getResourcePath;
+
 public class App extends Application {
 
     public static Context context;
+    public static SPUtil mInstance;
 
     @Override
     public void onCreate() {
@@ -20,13 +29,15 @@ public class App extends Application {
         context = getApplicationContext();
 //        initTheme();
 
+        SPUtil.init(this);
+        LoadResourceUtil.getInstance().init(this ,getResourcePath());
         SkinCompatManager.withoutActivity(this)
 //                .addStrategy(new CustomSDCardLoader())          // 自定义加载策略，指定SDCard路径
 //                .addStrategy(new ZipSDCardLoader())             // 自定义加载策略，获取zip包中的资源
-                .addInflater(new SkinAppCompatViewInflater())   // 基础控件换肤
-                .addInflater(new SkinMaterialViewInflater())    // material design
-                .addInflater(new SkinConstraintViewInflater())  // ConstraintLayout
-                .addInflater(new SkinCardViewInflater())        // CardView v7
+                .addInflater(new SkinAppCompatViewInflater())     // 基础控件换肤
+                .addInflater(new SkinMaterialViewInflater())      // material design
+                .addInflater(new SkinConstraintViewInflater())    // ConstraintLayout
+                .addInflater(new SkinCardViewInflater())          // CardView v7
 //                .setSkinStatusBarColorEnable(true)              // 关闭状态栏换肤
 //                .setSkinWindowBackgroundEnable(false)           // 关闭windowBackground换肤
 //                .setSkinAllActivityEnable(false)                // true: 默认所有的Activity都换肤; false: 只有实现SkinCompatSupportable接口的Activity换肤
@@ -34,6 +45,7 @@ public class App extends Application {
 
     }
 
+    // 资源分离
     // 系统自带白天黑夜模式 需重启 Activity 局限性较大
     private void initTheme() {
         TheamColorUtil settingUtil = TheamColorUtil.getInstance();
@@ -66,5 +78,10 @@ public class App extends Application {
             }
         }
     }
+
+    //资源路径
+  /*  public static String getResourcePath(){
+        return mInstance.getString(Config.SP_RESOURCE_PATH ,"");
+    }*/
 
 }

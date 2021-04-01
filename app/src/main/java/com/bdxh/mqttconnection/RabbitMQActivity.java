@@ -2,6 +2,8 @@ package com.bdxh.mqttconnection;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.bdxh.mqttconnection.utils.ThreadManager;
 import com.blankj.utilcode.util.LogUtils;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 应用内换肤所有资源都要加后缀  可以添加多套颜色res  -->
-    <color name="colorPrimary_green_night">#35464e</color>
-    <color name="colorPrimaryDark_night">#212a2f</color>
-    <color name="colorAccent_night">#212a2f</color>
-    <color name="textColorPrimary_night">#616161</color>
+    <color name="colorPrimary_night">#E91E63</color>
+    <color name="colorPrimaryDark_night">#E91E63</color>
+    <color name="colorAccent_night">#FF5252</color>
+    <color name="textColorPrimary_night">#2196f3</color>
 
     <color name="White_night">#2196f3</color>
 

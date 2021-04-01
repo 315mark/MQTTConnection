@@ -36,5 +36,35 @@
         android:onClick="changeSkin"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="动态加载资源"
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
+        android:onClick="loadResource"
+        />
+
+    <TextView
+        android:id="@+id/loadResourceImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="加载资源图片"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/loadResourceTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="加载文字颜色"
+        android:textSize="16sp"
+
+        />
 
 </LinearLayout>
